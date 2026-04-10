@@ -42,39 +42,43 @@ Tabelul de mai jos conține componentele principale folosite în designul plăci
 | **Ecran E-Ink 1.54 inch** | Display principal (SPI) | N/A (Modul) | [Datasheet Waveshare](https://www.waveshare.com/wiki/1.54inch_e-Paper_Module) |
 ## 3. Descrierea Funcționalității Hardware
 
-Procesare și Conectivitate:
+### Procesare și Conectivitate:
 Inima ceasului InkTime este SoC-ul Nordic nRF52840. A fost ales datorită suportului nativ pentru Bluetooth 5.0 (BLE), esențial pentru sincronizarea notificărilor cu telefonul mobil. Arhitectura ARM Cortex-M4F permite procesarea eficientă a algoritmilor de numărare a pașilor și calcul al ritmului cardiac.
 
-Managementul Consumului de Energie (Power Tree):
+### Managementul Consumului de Energie (Power Tree):
 Fiind un dispozitiv wearable, constrângerile de baterie sunt critice.
 
-    Sistemul este alimentat de o baterie LiPo de mici dimensiuni (ex. 200mAh).
+Sistemul este alimentat de o baterie LiPo de mici dimensiuni (ex. 200mAh).
 
-    Încărcarea se face la 5V printr-un circuit BQ24040, reglat din rezistențe pentru a oferi un curent de încărcare mic și sigur (ex. 100mA).
+Încărcarea se face la 5V printr-un circuit BQ24040, reglat din rezistențe pentru a oferi un curent de încărcare mic și sigur (ex. 100mA).
 
-    Pentru a coborî tensiunea la 3.3V am folosit un LDO din seria TPS7A05, care are un curent de repaus (Iq) de doar 1µA, esențial pentru a nu drena bateria când ceasul este în Deep Sleep.
+Pentru a coborî tensiunea la 3.3V am folosit un LDO din seria TPS7A05, care are un curent de repaus (Iq) de doar 1µA, esențial pentru a nu drena bateria când ceasul este în Deep Sleep.
 
-Periferice și Interfețe:
+### Periferice și Interfețe:
 
-    Display-ul E-Ink: Comunică prin protocol SPI. Deși are un framerate mic, este perfect pentru un ceas deoarece consumă 0mA pentru a menține imaginea afișată.
+Display-ul E-Ink: Comunică prin protocol SPI. Deși are un framerate mic, este perfect pentru un ceas deoarece consumă 0mA pentru a menține imaginea afișată.
 
-    Senzorii (IMU & HR): Comunicația se realizează pe o magistrală I2C partajată. BMA400 are un mod special de "step counter" hardware care poate trezi microcontroller-ul din sleep doar când utilizatorul face un pas, economisind masiv energia.
+Senzorii (IMU & HR): Comunicația se realizează pe o magistrală I2C partajată. BMA400 are un mod special de "step counter" hardware care poate trezi microcontroller-ul din sleep doar când utilizatorul face un pas, economisind masiv energia.
 
 ## 4. Alocarea Pinilor nRF52840
 
 Microcontroller-ul nRF52840 permite maparea flexibilă a pinilor (orice funcție digitală pe orice pin), lucru care a facilitat o rutare curată (fără suprapuneri) pe PCB.
-Pin nRF52840	Nume Net / Funcție	Justificare / Detalii
-P0.13 / P0.14 / P0.15	SPI_SCK, SPI_MOSI, SPI_MISO	Magistrala SPI dedicată ecranului E-Ink. Pinii au fost aleși pe aceeași latură a chip-ului cu conectorul FPC al ecranului.
-P0.16	EINK_CS (Chip Select)	Activare magistrală SPI pentru ecran.
-P0.17 / P0.18	EINK_DC, EINK_RST	Pini de control adiționali (Data/Command și Reset) necesari controller-ului de E-Ink.
-P0.26 / P0.27	I2C_SDA, I2C_SCL	Magistrala I2C pentru accelerometru (BMA400) și senzorul de puls (MAX30102). Conține rezistențe de pull-up de 4.7k.
-P1.02	IMU_INT (Interrupt)	Pin setat ca Input. BMA400 trimite un semnal aici pentru a trezi SoC-ul când detectează mișcare.
-P1.06	MOTOR_PWM	Pin configurat ca ieșire PWM, conectat la poarta unui tranzistor MOSFET N-Channel pentru a acționa motorul de vibrații (notificări haptice).
-P0.11 / P0.12	BTN_UP, BTN_DOWN	Pini conectați la butoanele laterale, configurați cu Input Pull-Up intern.
+| Pin nRF52840 | Nume Net / Funcție | Justificare / Detalii |
+| :--- | :--- | :--- |
+| **P0.13 / P0.14 / P0.15** | `SPI_SCK`, `SPI_MOSI`, `SPI_MISO` | Magistrala SPI dedicată ecranului E-Ink. Pinii au fost aleși pe aceeași latură a chip-ului cu conectorul FPC al ecranului. |
+| **P0.16** | `EINK_CS` (Chip Select) | Activare magistrală SPI pentru ecran. |
+| **P0.17 / P0.18** | `EINK_DC`, `EINK_RST` | Pini de control adiționali (Data/Command și Reset) necesari controller-ului de E-Ink. |
+| **P0.26 / P0.27** | `I2C_SDA`, `I2C_SCL` | Magistrala I2C pentru accelerometru (BMA400) și senzorul de puls (MAX30102). Conține rezistențe de pull-up de 4.7k. |
+| **P1.02** | `IMU_INT` (Interrupt) | Pin setat ca Input. BMA400 trimite un semnal aici pentru a trezi SoC-ul când detectează mișcare. |
+| **P1.06** | `MOTOR_PWM` | Pin configurat ca ieșire PWM, conectat la poarta unui tranzistor MOSFET N-Channel pentru a acționa motorul de vibrații (notificări haptice). |
+| **P0.11 / P0.12** | `BTN_UP`, `BTN_DOWN` | Pini conectați la butoanele laterale, configurați cu Input Pull-Up intern. |
 ## 5. Design Log & Integrare Mecanică (EVT Phase)
 
-    Construcția PCB-ului: Cablajul a fost realizat pe 2 straturi. Pentru a asigura performanța antenei, a fost respectată zona de keepout cerută în datasheet-ul antenei ceramice (sau PCB trace), neavând planuri de masă sub aceasta.
+### Construcția PCB-ului: 
+Cablajul a fost realizat pe 2 straturi. Pentru a asigura performanța antenei, a fost respectată zona de keepout cerută în datasheet-ul antenei ceramice (sau PCB trace), neavând planuri de masă sub aceasta.
 
-    Constrângeri Mecanice: Forma PCB-ului a fost dictată strict de fișierul .step al carcasei primite. Decupajele plăcii se aliniază perfect cu pinii de montare ai carcasei.
+### Constrângeri Mecanice: 
+Forma PCB-ului a fost dictată strict de fișierul .step al carcasei primite. Decupajele plăcii se aliniază perfect cu pinii de montare ai carcasei.
 
-    Stack-up 3D: Modelul 3D final validează faptul că placa de bază, bateria (poziționată sub PCB) și display-ul E-Ink (deasupra PCB-ului) intră în carcasa de smartwatch fără coliziuni de componente.
+### Stack-up 3D: 
+Modelul 3D final validează faptul că placa de bază, bateria (poziționată sub PCB) și display-ul E-Ink (deasupra PCB-ului) intră în carcasa de smartwatch fără coliziuni de componente.
