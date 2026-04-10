@@ -17,7 +17,7 @@ graph TD
     LDO -.->|3.3V| MCU[SoC nRF52840]
     
     %% Interfaces & Peripherals
-    MCU <-->|SPI| EINK[Display E-Ink 1.54"]
+    MCU <-->|SPI| EINK[Display E-Ink 1.54]
     MCU <-->|I2C| IMU[Accelerometru BMA400]
     MCU <-->|I2C| HR[Senzor Puls MAX30102]
     MCU -->|GPIO| VIB[Motor Vibrații]
@@ -32,13 +32,14 @@ graph TD
 ## 2. Bill Of Materials (BOM)
 
 Tabelul de mai jos conține componentele principale folosite în designul plăcii. Lista completă (inclusiv rezistențe și condensatoare) se găsește în fișierul .csv din folderul Manufacturing.
-Componentă	Rol în sistem	JLC Part #	Link Datasheet
-nRF52840-QIAA	Microcontroller principal (BLE, Cortex-M4F)	C206001	Datasheet nRF52840
-BQ24040DSQR	IC Încărcare Acumulator LiPo (1A)	C43012	Datasheet BQ24040
-TPS7A0533PDQNR	LDO 3.3V (Consum Quiescent extrem de mic - 1µA)	C396492	Datasheet TPS7A05
-BMA400	Accelerometru Ultra-Low Power (Pedometer)	C383215	Datasheet BMA400
-MAX30102	Senzor Optic Puls și SpO2	C84666	Datasheet MAX30102
-Ecran E-Ink 1.54"	Display principal (SPI)	N/A (Modul)	Datasheet Waveshare
+| Componentă | Rol în sistem | JLC Part # | Link Datasheet |
+| :--- | :--- | :--- | :--- |
+| **nRF52840-QIAA** | Microcontroller principal (BLE, Cortex-M4F) | C206001 | [Datasheet nRF52840](https://infocenter.nordicsemi.com/pdf/nRF52840_PS_v1.7.pdf) |
+| **BQ24040DSQR** | IC Încărcare Acumulator LiPo (1A) | C43012 | [Datasheet BQ24040](https://www.ti.com/lit/ds/symlink/bq24040.pdf) |
+| **TPS7A0533PDQNR** | LDO 3.3V (Consum Quiescent extrem de mic - 1µA) | C396492 | [Datasheet TPS7A05](https://www.ti.com/lit/ds/symlink/tps7a05.pdf) |
+| **BMA400** | Accelerometru Ultra-Low Power (Pedometer) | C383215 | [Datasheet BMA400](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bma400-ds000.pdf) |
+| **MAX30102** | Senzor Optic Puls și SpO2 | C84666 | [Datasheet MAX30102](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX30102.pdf) |
+| **Ecran E-Ink 1.54 inch** | Display principal (SPI) | N/A (Modul) | [Datasheet Waveshare](https://www.waveshare.com/wiki/1.54inch_e-Paper_Module) |
 ## 3. Descrierea Funcționalității Hardware
 
 Procesare și Conectivitate:
