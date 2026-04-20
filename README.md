@@ -82,3 +82,40 @@ Forma PCB-ului a fost dictată strict de fișierul .step al carcasei primite. De
 
 ### Stack-up 3D: 
 Modelul 3D final validează faptul că placa de bază, bateria (poziționată sub PCB) și display-ul E-Ink (deasupra PCB-ului) intră în carcasa de smartwatch fără coliziuni de componente.
+
+## 5. Calcule Detaliate de Consum de Energie (Power Budget)
+
+Pentru a estima durata de viata a bateriei, am analizat consumul principalelor componente din circuit (nRF52840, IMU, DC/DC converter) in doua scenarii principale: Mod Activ si Mod Sleep (Standby).
+
+### 1. Parametrii Bateriei
+* Tip baterie: Li-Po
+* Tensiune nominala: 3.7V
+* Capacitate: 500 mAh
+
+### 2. Consum in Mod Activ (Transmisie BLE + Achizitie Date IMU)
+Cand dispozitivul este treaz, citeste date de la senzori si transmite pachete prin Bluetooth.
+* nRF52840 (CPU + TX/RX la 0dBm): ~14.0 mA
+* Senzor IMU (Mod Activ): ~1.0 mA
+* Pierderi DC/DC Converter (Eficienta 90%): ~1.5 mA
+* Total Consum Activ: ~16.5 mA
+
+### 3. Consum in Mod Sleep (Standby / System OFF)
+Cand dispozitivul nu este folosit, microcontrolerul intra in deep sleep, iar senzorii sunt trecuti in power-down.
+* nRF52840 (System OFF, RAM retention): ~1.5 uA (0.0015 mA)
+* Senzor IMU (Mod Power-Down): ~5.0 uA (0.005 mA)
+* Quiescent Current DC/DC + LDO: ~10.0 uA (0.01 mA)
+* Total Consum Sleep: ~16.5 uA (0.0165 mA)
+
+### 5. Estimarea Duratei de Viata a Bateriei (Battery Life)
+
+Scenariul A: Utilizare Continua (100% Mod Activ)
+Daca dispozitivul ar transmite date non-stop:
+* 500 mAh / 16.5 mA = 30.3 ore de functionare continua.
+
+Scenariul B: Dispozitiv lasat pe birou (100% Mod Sleep)
+Daca dispozitivul este pur si simplu lasat in stand-by:
+* 500 mAh / 0.0165 mA = 30,303 ore = Aproximativ 3.4 ani.
+
+Scenariul C: Utilizare Realista (Mix: 5% Activ, 95% Sleep)
+Presupunand ca dispozitivul se trezeste periodic pentru a trimite date:
+* Consum mediu = (16.5 mA * 0.05) + (0.0165 mA * 0.95) = 0.825 mA + 0.015 mA = 0.84 mA
